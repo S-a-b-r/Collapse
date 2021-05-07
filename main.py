@@ -1,12 +1,10 @@
 from termcolor import colored
+from PIL import Image, ImageDraw, ImageFont
 import random
 
-N = 20
+N = 70
 matrix = []
 outMatrix = []
-countS = 0
-countG = 0
-countL = 0
 
 for i in range(N):
     matrix.append([])
@@ -60,50 +58,22 @@ def findNextTile():
                 minJ = j
     return minI,minJ
 
-#def updateOutMatrix():
-#    for i in range(N):
-#        for j in range(N):
-#            if(len(matrix[i][j])==1):
-#                outMatrix[i][j] = matrix[i][j][0]
-#                matrix[i][j].pop()
-
-
-
 def iteration():
-
-    global countS
-    global countG
-    global countL
 
     i,j = findNextTile()
     try:
-        #if(len(matrix[i][j]) == 3):
-        #    outMatrix[i][j] = random.choices(matrix[i][j], weights=[100,20,100])[0]
-        #elif(len(matrix[i][j])== 1):
-        #    outMatrix[i][j] == matrix[i][j][0][0]
-        #elif('L' in matrix[i][j] and 'G' in matrix[i][j]):
-        #    outMatrix[i][j] = random.choices(matrix[i][j], weights=[3,1000])[0]
-        #elif('S' in matrix[i][j] and 'G' in matrix[i][j]):
-        #    outMatrix[i][j] = random.choices(matrix[i][j], weights=[1000,3])[0]
-
-        #w = 0
-        #arr = []
-        #for i in range(len(matrix[i][j])):
-        #    arr.append(w)
-        #    w+=1
         
         if(len(matrix[i][j]) == 3):
-            outMatrix[i][j] = matrix[i][j][random.choices([0,1,2],weights = [40,20,40])[0]]
+            outMatrix[i][j] = matrix[i][j][random.choices([0,1,2],weights = [100,20,40])[0]]
         elif(len(matrix[i][j])==2 and 'S' in matrix[i][j]):
             outMatrix[i][j] = matrix[i][j][random.choices([0,1],weights = [500,20])[0]]
         elif(len(matrix[i][j])==2 and 'L' in matrix[i][j]):
-            outMatrix[i][j] = matrix[i][j][random.choices([0,1],weights = [20,40])[0]]
+            outMatrix[i][j] = matrix[i][j][random.choices([0,1],weights = [20,50])[0]]
         elif(len(matrix[i][j])==1):
             outMatrix[i][j] = matrix[i][j][0]
-        #outMatrix[i][j] = matrix[i][j][random.choices(arr,weights = [40,20,40])[0]]
-        #outMatrix[i][j] = matrix[i][j][random.randint(0,len(matrix[i][j])-1)]
     except:
         pass
+
     #Чистим активный элемент начальной матрицы
     for k in range(len(matrix[i][j])):
         matrix[i][j].pop()
@@ -111,7 +81,6 @@ def iteration():
     #Чистим остальные элементы матрицы
     #Если активный элемент стал Небом
     if(outMatrix[i][j] == 'S'):
-        countS+=1
 
         try:
             if(i-1>=0):
@@ -143,7 +112,6 @@ def iteration():
     
     #Если активный элемент стал травой
     if(outMatrix[i][j] == 'G'):
-        countG+=1
         
         try:
             if(i-1>=0):
@@ -171,8 +139,6 @@ def iteration():
     
     #Если активный элемент стал Землей
     if(outMatrix[i][j] == 'L'):
-        countL+=1
-
         try:
             if(i-1>=0):
                 matrix[i-1][j].remove('S')
@@ -207,7 +173,49 @@ def iteration():
 for i in range(N):
     for j in range(N):
         iteration()
-arr = [0,1,2]
-#print(matrix[0][0][random.choices(arr,weights = [40,20,40])[0]])
+
 printMatrix()
-#printMatrix1()
+
+#ДАЛЕЕ РАБОТА С ИЗОБРАЖЕНИЯМИ
+
+
+def convert():
+    imagesForConcat = []
+    for i in range(N):
+        imagesForConcat.append([])
+        for j in range(N):
+            if(outMatrix[i][j] == 'S'):
+                imagesForConcat[i].append(Image.open('sky.png'))
+            elif(outMatrix[i][j] == 'G'):
+                imagesForConcat[i].append(Image.open('green.png'))
+            elif(outMatrix[i][j] == 'L'):
+                imagesForConcat[i].append(Image.open('land.png'))
+    return imagesForConcat
+
+def sample():
+    image = Image.new('RGBA', (10, 10))
+    draw = ImageDraw.Draw(image)
+    draw.rectangle(((0, 0), (10, 10)), fill=(82, 206, 0))  # синий квадрат
+    image.save('green.png')
+
+def concat(images):
+    #for i in range(N):
+    #    for j in range(N):
+    #        images[i][j].load().convert('RGB')
+    width, height = images[0][0].size  # size of element
+    total_width = width * len(images[0])
+    max_height = height * len(images)
+    result = Image.new('RGBA', (total_width, max_height))  # common canvas
+
+    y_offset = 0
+    for line in images:
+        x_offset = 0
+        for element in line:
+            result.paste(element, (x_offset, y_offset))
+            x_offset += element.size[0]
+        y_offset += line[0].size[1]
+    
+    result.save('result.png')
+
+
+concat(convert())
