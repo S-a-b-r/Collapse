@@ -2,7 +2,7 @@ from termcolor import colored
 from PIL import Image, ImageDraw, ImageFont
 import random
 
-N = 70
+N = 25
 matrix = []
 outMatrix = []
 
@@ -192,6 +192,61 @@ def convert():
                 imagesForConcat[i].append(Image.open('land.png'))
     return imagesForConcat
 
+def convertToImage():
+    imagesForConcat = []
+    for i in range(N):
+        imagesForConcat.append([])
+        for j in range(N):
+            right = 0
+            bottom = 0
+            try:
+                right = outMatrix[i][j+1]
+            except:
+                pass
+
+            try:
+                bottom = outMatrix[i+1][j]
+            except:
+                pass
+            
+            #Небо
+            if(outMatrix[i][j] == 'S'):
+                imagesForConcat[i].append(Image.open('models/sky.png'))
+
+            #Дерево
+            #elif(outMatrix[i][j] == 'G' and bottom == 'L' and outMatrix[i-1][j] == 'G'):
+            #    imagesForConcat[i].append(Image.open('models/land1.png'))
+            elif(outMatrix[i][j] == 'G' and right == 'S' and outMatrix[i][j-1] == 'S'):
+                imagesForConcat[i].append(Image.open('models/tree1.png'))
+            #Угловые тайлы травы
+            elif(outMatrix[i][j] == 'G' and right == 'G' and bottom == 'G'):
+                imagesForConcat[i].append(Image.open('models/green-top-left1.png'))
+            elif(outMatrix[i][j] == 'G' and outMatrix[i][j-1] == 'G' and bottom == 'G'):
+                imagesForConcat[i].append(Image.open('models/green-top-right.png'))
+            elif(outMatrix[i][j] == 'G' and outMatrix[i][j-1] == 'G' and outMatrix[i-1][j] == 'G'):
+                imagesForConcat[i].append(Image.open('models/green-bottom-right.png'))
+            elif(outMatrix[i][j] == 'G' and right == 'G' and outMatrix[i-1][j] == 'G'):
+                imagesForConcat[i].append(Image.open('models/green-bottom-left.png'))
+
+            #остальная трава
+            elif(outMatrix[i][j] == 'G' and right == 'S'):
+                imagesForConcat[i].append(Image.open('models/green-right.png'))
+            elif(outMatrix[i][j] == 'G' and outMatrix[i][j-1] == 'S'):
+                imagesForConcat[i].append(Image.open('models/green-left.png'))
+            elif(outMatrix[i][j] == 'G' and outMatrix[i-1][j] == 'S'):
+                imagesForConcat[i].append(Image.open('models/green-top.png'))
+
+            #Земля
+            elif(outMatrix[i][j] == 'L'):
+                num = str(random.choices([1,2,3,4,5],weights = [1000,10,10,10,10])[0])
+                filename = 'models/land'+str(num)+'.png'
+                imagesForConcat[i].append(Image.open(filename))
+
+            else:
+                imagesForConcat[i].append(Image.open('models/land1.png'))
+    return imagesForConcat
+            
+
 def sample():
     image = Image.new('RGBA', (10, 10))
     draw = ImageDraw.Draw(image)
@@ -207,6 +262,7 @@ def concat(images):
     max_height = height * len(images)
     result = Image.new('RGBA', (total_width, max_height))  # common canvas
 
+
     y_offset = 0
     for line in images:
         x_offset = 0
@@ -217,5 +273,9 @@ def concat(images):
     
     result.save('result.png')
 
-
-concat(convert())
+#img = Image.open('models/green-left.png')
+#img.save('green1.png')
+#Image._show('result.png')
+#imgs = convertToImage()
+concat(convertToImage())
+#print(random.choices([1,2,3,4,5],weights = [100,10,10,10,10])[0])
