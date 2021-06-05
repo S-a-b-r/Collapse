@@ -2,7 +2,7 @@ from termcolor import colored
 from PIL import Image, ImageDraw, ImageFont
 import random
 
-N = 25
+N = 50
 matrix = []
 outMatrix = []
 
@@ -124,6 +124,18 @@ def iteration():
                 matrix[i-1][j].remove('L')
         except:
             pass
+        
+        #try:
+        #    if(i-1>=0):
+        #        matrix[i-1][j+1].remove('L')
+        #except:
+        #    pass
+#
+        #try:
+        #    if(i-1>=0 and j-1>=0):
+        #        matrix[i-1][j-1].remove('L')
+        #except:
+        #    pass
 
         #try:
         #    if(i-1>=0):
@@ -217,16 +229,21 @@ def convertToImage():
             #elif(outMatrix[i][j] == 'G' and bottom == 'L' and outMatrix[i-1][j] == 'G'):
             #    imagesForConcat[i].append(Image.open('models/land1.png'))
             elif(outMatrix[i][j] == 'G' and right == 'S' and outMatrix[i][j-1] == 'S'):
+                outMatrix[i][j] = 'T'
                 imagesForConcat[i].append(Image.open('models/tree1.png'))
             #Угловые тайлы травы
+            elif(outMatrix[i][j] == 'G' and (outMatrix[i-1][j] == 'S'or outMatrix[i-1][j] == 'T') and right =='S'):
+                imagesForConcat[i].append(Image.open('models/green-top-right.png'))
+            elif(outMatrix[i][j] == 'G' and (outMatrix[i-1][j] == 'S' or outMatrix[i-1][j] == 'T')and outMatrix[i][j-1] =='S'):
+                imagesForConcat[i].append(Image.open('models/green-top-left1.png'))
             elif(outMatrix[i][j] == 'G' and right == 'G' and bottom == 'G'):
                 imagesForConcat[i].append(Image.open('models/green-top-left1.png'))
             elif(outMatrix[i][j] == 'G' and outMatrix[i][j-1] == 'G' and bottom == 'G'):
                 imagesForConcat[i].append(Image.open('models/green-top-right.png'))
             elif(outMatrix[i][j] == 'G' and outMatrix[i][j-1] == 'G' and outMatrix[i-1][j] == 'G'):
-                imagesForConcat[i].append(Image.open('models/green-bottom-right.png'))
-            elif(outMatrix[i][j] == 'G' and right == 'G' and outMatrix[i-1][j] == 'G'):
                 imagesForConcat[i].append(Image.open('models/green-bottom-left.png'))
+            elif(outMatrix[i][j] == 'G' and right == 'G' and outMatrix[i-1][j] == 'G'):
+                imagesForConcat[i].append(Image.open('models/green-bottom-right.png'))
 
             #остальная трава
             elif(outMatrix[i][j] == 'G' and right == 'S'):
