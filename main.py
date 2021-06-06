@@ -2,7 +2,7 @@ from termcolor import colored
 from PIL import Image, ImageDraw, ImageFont
 import random
 
-N = 50
+N = 20
 matrix = []
 outMatrix = []
 
@@ -125,23 +125,34 @@ def iteration():
         except:
             pass
         
-        #try:
-        #    if(i-1>=0):
-        #        matrix[i-1][j+1].remove('L')
-        #except:
-        #    pass
-#
-        #try:
-        #    if(i-1>=0 and j-1>=0):
-        #        matrix[i-1][j-1].remove('L')
-        #except:
-        #    pass
+        try:
+            if(i-1>=0):
+                matrix[i-1][j+1].remove('L')
+        except:
+            pass
 
-        #try:
-        #    if(i-1>=0):
-        #        matrix[i+1][j].remove('G')
-        #except:
-        #    pass
+        try:
+            if(i-1>=0 and j-1>=0):
+                matrix[i-1][j-1].remove('L')
+        except:
+            pass
+
+        try:
+            if(i-1>=0):
+                matrix[i+1][j].remove('G')
+        except:
+            pass
+
+        try:
+            matrix[i+1][j+1].remove('S')
+        except:
+            pass
+
+        try:
+            if(j-1>0):
+                matrix[i+1][j-1].remove('S')
+        except:
+            pass
 
         try:
             matrix[i+1][j].remove('S')
@@ -229,8 +240,9 @@ def convertToImage():
             #elif(outMatrix[i][j] == 'G' and bottom == 'L' and outMatrix[i-1][j] == 'G'):
             #    imagesForConcat[i].append(Image.open('models/land1.png'))
             elif(outMatrix[i][j] == 'G' and right == 'S' and outMatrix[i][j-1] == 'S'):
-                outMatrix[i][j] = 'T'
-                imagesForConcat[i].append(Image.open('models/tree1.png'))
+                #outMatrix[i][j] = 'T'
+                #imagesForConcat[i].append(Image.open('models/tree1.png'))
+                imagesForConcat[i].append(Image.open('models/green-top.png'))
             #Угловые тайлы травы
             elif(outMatrix[i][j] == 'G' and (outMatrix[i-1][j] == 'S'or outMatrix[i-1][j] == 'T') and right =='S'):
                 imagesForConcat[i].append(Image.open('models/green-top-right.png'))
