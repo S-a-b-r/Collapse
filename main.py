@@ -2,7 +2,7 @@ from termcolor import colored
 from PIL import Image, ImageDraw, ImageFont
 import random
 
-N = 20
+N = 50
 matrix = []
 outMatrix = []
 
@@ -19,15 +19,12 @@ def printMatrix():
         for j in range(N):
             if(outMatrix[i][j] == 'G'):
                 out += colored('G','green')+" "
-            #elif(outMatrix[i][j] == '0'):
-            #    out += colored('G','green')+" "
             elif(outMatrix[i][j] == 'S'):
                 out += colored('S','cyan') + " "
             elif(outMatrix[i][j] == 'L'):
                 out += colored('L','yellow') + " "
             else:
                 out += colored(str(outMatrix[i][j]),'red')+ " "
-            #out += str(outMatrix[i][j])+ " "
         out+="\n"
     print(out)
 
@@ -62,7 +59,6 @@ def iteration():
 
     i,j = findNextTile()
     try:
-        
         if(len(matrix[i][j]) == 3):
             outMatrix[i][j] = matrix[i][j][random.choices([0,1,2],weights = [100,20,40])[0]]
         elif(len(matrix[i][j])==2 and 'S' in matrix[i][j]):
@@ -137,22 +133,22 @@ def iteration():
         except:
             pass
 
-        try:
-            if(i-1>=0):
-                matrix[i+1][j].remove('G')
-        except:
-            pass
+        #try:
+        #    if(i-1>=0):
+        #        matrix[i+1][j].remove('G')
+        #except:
+        #    pass
 
-        try:
-            matrix[i+1][j+1].remove('S')
-        except:
-            pass
+        #try:
+        #    matrix[i+1][j+1].remove('S')
+        #except:
+        #    pass
 
-        try:
-            if(j-1>0):
-                matrix[i+1][j-1].remove('S')
-        except:
-            pass
+        #try:
+        #    if(j-1>0):
+        #        matrix[i+1][j-1].remove('S')
+        #except:
+        #    pass
 
         try:
             matrix[i+1][j].remove('S')
@@ -199,8 +195,9 @@ for i in range(N):
 
 printMatrix()
 
-#ДАЛЕЕ РАБОТА С ИЗОБРАЖЕНИЯМИ
 
+
+#ДАЛЕЕ РАБОТА С ИЗОБРАЖЕНИЯМИ
 
 def convert():
     imagesForConcat = []
@@ -240,9 +237,8 @@ def convertToImage():
             #elif(outMatrix[i][j] == 'G' and bottom == 'L' and outMatrix[i-1][j] == 'G'):
             #    imagesForConcat[i].append(Image.open('models/land1.png'))
             elif(outMatrix[i][j] == 'G' and right == 'S' and outMatrix[i][j-1] == 'S'):
-                #outMatrix[i][j] = 'T'
-                #imagesForConcat[i].append(Image.open('models/tree1.png'))
-                imagesForConcat[i].append(Image.open('models/green-top.png'))
+                outMatrix[i][j] = 'T'
+                imagesForConcat[i].append(Image.open('models/tree1.png'))
             #Угловые тайлы травы
             elif(outMatrix[i][j] == 'G' and (outMatrix[i-1][j] == 'S'or outMatrix[i-1][j] == 'T') and right =='S'):
                 imagesForConcat[i].append(Image.open('models/green-top-right.png'))
